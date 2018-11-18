@@ -48,7 +48,10 @@ function addNote(title, body) {
 
 switch (argv._[0]) {
   case "add":
-    addNote(argv.title, argv.body);
+    if (argv.hasOwnProperty("title") && argv.hasOwnProperty("body")) {
+      addNote(argv.title, argv.body);
+    }
+
     break;
   case "remove":
     break;

@@ -51,7 +51,10 @@ function addNote(title, body) {
 
 switch (_yargs.argv._[0]) {
   case "add":
-    addNote(_yargs.argv.title, _yargs.argv.body);
+    if (_yargs.argv.hasOwnProperty("title") && _yargs.argv.hasOwnProperty("body")) {
+      addNote(_yargs.argv.title, _yargs.argv.body);
+    }
+
     break;
   case "remove":
     break;

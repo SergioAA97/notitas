@@ -6,7 +6,7 @@
     "build": "rimraf dist/ && babel ./ --out-dir dist/ --ignore ./node_modules,./.babelrc,./package.json,./npm-debug.log --copy-files",
     "start": "npm run build && nodemon dist/bin/www",
     "debug": "npm run build && nodemon --inspect dist/bin/www",
-    "testing": "npm run build && nodemon dist/testing.js"
+    "testing": "npm run build && node dist/testing.js"
   },
   "dependencies": {
     "cookie-parser": "~1.4.3",
