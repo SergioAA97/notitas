@@ -1,10 +1,13 @@
-import { readFileSync, writeFile } from "fs";
-import { argv } from "yargs";
+"use strict";
+
+var _fs = require("fs");
+
+var _yargs = require("yargs");
 
 var notePath = "./notes.txt";
 
 function fetchNotes() {
-  var notes = readFileSync(notePath, { encoding: "utf8" });
+  var notes = (0, _fs.readFileSync)(notePath, { encoding: "utf8" });
   var jsonObj = [];
   try {
     if (notes) {
@@ -36,7 +39,7 @@ function addNote(title, body) {
   notes.push(note);
   var newArray = JSON.stringify(notes);
 
-  writeFile(notePath, newArray, err => {
+  (0, _fs.writeFile)(notePath, newArray, function (err) {
     if (err) {
       console.log("ERROR: File could not be opened:", err);
       return false;
@@ -46,9 +49,9 @@ function addNote(title, body) {
   });
 }
 
-switch (argv._[0]) {
+switch (_yargs.argv._[0]) {
   case "add":
-    addNote(argv.title, argv.body);
+    addNote(_yargs.argv.title, _yargs.argv.body);
     break;
   case "remove":
     break;
@@ -61,14 +64,10 @@ switch (argv._[0]) {
     break;
   default:
     console.log("Usage:");
-    console.log(
-      "Add: add a new note (--title='New Title', --body='Some text here...')"
-    );
+    console.log("Add: add a new note (--title='New Title', --body='Some text here...')");
     console.log("Remove: remove a note (--title='New Title')");
     console.log("Get: get a note (--title='New Title')");
-    console.log(
-      "Mod: modify a note (--title='New Title', --body='Some text here...')"
-    );
+    console.log("Mod: modify a note (--title='New Title', --body='Some text here...')");
     console.log("All: get all notes");
     break;
 }
