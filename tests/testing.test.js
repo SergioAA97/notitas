@@ -15,9 +15,9 @@ it("[testing.js:fetchNotes] Deberia devolver un array", () => {
   // Creamos JSON que es un objeto, pero no es un array
   const objJson = `{"some":"value"}`;
   // Creamos notas test
-  const corrPath = createTestNotes({ str: objJson });
+  const testFilePath = createTestNotes({ str: objJson });
   // Hacemos fetch sobre el archivo corrupto
-  const testNote = fetchNotes({ path: corrPath });
+  const testNote = fetchNotes({ path: testFilePath });
   if (!Array.isArray(testNote)) {
     //  Pasando un archivo corrupto comprobamos si la funcion devuelve siempre un array o si falla
     throw new Error(
@@ -29,13 +29,17 @@ it("[testing.js:fetchNotes] Deberia devolver un array", () => {
   const corrJson = `"someFail":"willOccur"}`;
   createTestNotes({ str: corrJson });
   // Hacemos fetch sobre el archivo corrupto
-  const corrNote = fetchNotes({ path: corrPath });
+  const corrNote = fetchNotes({ path: testFilePath });
   if (!Array.isArray(corrNote)) {
     //  Pasando un archivo corrupto comprobamos si la funcion devuelve siempre un array o si falla
     throw new Error(
       `Fallo de tipo con datos corruptos: deberia ser array, es: ${typeof corrNote}`
     );
   }
+
+  //Clean up
+
+  fs.unlinkSync(testFilePath);
 });
 
 /**

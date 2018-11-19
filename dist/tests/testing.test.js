@@ -21,14 +21,12 @@ it("[testing.js:fetchNotes] Deberia devolver un array", function () {
   }
 
   //Test inserting note
-  // Donde guardaremos el archivo de prueba
-  var corrPath = "./test.txt";
   // Creamos JSON que es un objeto, pero no es un array
   var objJson = "{\"some\":\"value\"}";
   // Creamos notas test
-  createTestNotes({ str: objJson });
+  var testFilePath = createTestNotes({ str: objJson });
   // Hacemos fetch sobre el archivo corrupto
-  var testNote = (0, _testing.fetchNotes)({ path: corrPath });
+  var testNote = (0, _testing.fetchNotes)({ path: testFilePath });
   if (!Array.isArray(testNote)) {
     //  Pasando un archivo corrupto comprobamos si la funcion devuelve siempre un array o si falla
     throw new Error("Fallo de tipo con datos invalidos: deberia ser array, es: " + (typeof testNote === "undefined" ? "undefined" : _typeof(testNote)));
@@ -38,13 +36,26 @@ it("[testing.js:fetchNotes] Deberia devolver un array", function () {
   var corrJson = "\"someFail\":\"willOccur\"}";
   createTestNotes({ str: corrJson });
   // Hacemos fetch sobre el archivo corrupto
-  var corrNote = (0, _testing.fetchNotes)({ path: corrPath });
+  var corrNote = (0, _testing.fetchNotes)({ path: testFilePath });
   if (!Array.isArray(corrNote)) {
     //  Pasando un archivo corrupto comprobamos si la funcion devuelve siempre un array o si falla
     throw new Error("Fallo de tipo con datos corruptos: deberia ser array, es: " + (typeof corrNote === "undefined" ? "undefined" : _typeof(corrNote)));
   }
+
+  //Clean up
+
+  _fs2.default.unlinkSync(testFilePath);
 });
 
+/**
+ * @desc Crea un archivo de texto en el path y con el str pasados
+ * @example
+ *  createTestNotes({str : 'someValue'});
+ * @param {object} obj - Un objeto
+ * @param {string} obj.str - El string a escribir en archivo
+ * @param {string} [obj.path] - Direccion donde guardar el archivo
+ * @return {string} La direccion donde se ha escrito el archivo
+ */
 var createTestNotes = function createTestNotes(_ref) {
   var _ref$path = _ref.path,
       path = _ref$path === undefined ? "./test.txt" : _ref$path,
@@ -53,6 +64,7 @@ var createTestNotes = function createTestNotes(_ref) {
   try {
     // Escribimos archivo de prueba
     _fs2.default.writeFileSync(path, str);
+    return path;
   } catch (e) {
     throw Error("[CRITICAL] Error creating note test file");
   }
