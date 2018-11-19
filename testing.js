@@ -1,23 +1,59 @@
+/* Se importan modulos */
 import { readFileSync, writeFile } from "fs";
+/* Parseo de comandos por consola */
 import { argv } from "yargs";
 
-var notePath = "./notes.txt";
+/*
+ *  ----    EXPORTS   ----
+ *
+ *  Estas funciones se exportan. Esto quiere decir que son
+ *  utilizables desde cualquier punto del proyecto.
+ *
+ *  Para importar una funcion en otro archivo, se sigue la
+ *  siguiente sintaxis:
+ *
+ *  import { fetchNotes } from 'pathToFile/file.js';
+ *
+ *  Donde pathToFile y file son la direccion del archivo en
+ *  el proyecto. Si el archivo se encuentra en la carpeta root del proyecto
+ *  la linea queda asi:
+ *
+ *  import { fetchNotes } from './testing.js';
+ */
 
-function fetchNotes() {
-  var notes = readFileSync(notePath, { encoding: "utf8" });
-  var jsonObj = [];
+export const notePath = "./notes.txt";
+/**
+ * @desc Devuelve un array con las notas o vacio
+ *
+ * @example
+ * import {fechNotes, notePath} from './testing.js';
+ *
+ * const notes = fetchNotes({notePath});
+ *
+ *  @param {Object} o - Un objeto
+ *  @param {string} [o.notePath = './notes.txt'] - Direccion de archivo de notas a abrir
+ *  @return {Array.<object>} El array con las notas (o vacio)
+ */
+export function fetchNotes({ path = notePath } = {}) {
+  var notes = [];
   try {
+    if (!path || typeof path !== "string") return notes;
+    notes = readFileSync(path, { encoding: "utf8" });
+    var jsonObj = [];
     if (notes) {
       jsonObj = JSON.parse(notes);
+      if (!Array.isArray(jsonObj)) {
+        return [];
+      }
     }
   } catch (e) {
-    console.log("Error parsing:", e);
+    console.log("Error parsing notes:", e);
   }
 
   return jsonObj;
 }
 
-function addNote(title, body) {
+export function addNote(title, body) {
   //Parameter checking
   if (!title || typeof title !== "string") {
     console.log("ERROR: title is not a string or is empty!");
@@ -46,6 +82,20 @@ function addNote(title, body) {
   });
 }
 
+/* ----    END EXPORTS   ---- */
+
+/* ----     EXECUTABLE CODE    ----
+ *
+ *  Este codigo solo se ejecuta con el siguiente comando en
+ *  el terminal:
+ *
+ *  npm run testing
+ *
+ *  He creado un script "testing" en package.json para que
+ *  ejecute el comando [ npm run build && node dist/testing.js ]
+ *  simplemente con poner npm run testing. Podeis ver como esta hecho en el
+ *  archivo package.json, bajo la propiedad "scripts".
+ */
 switch (argv._[0]) {
   case "add":
     if (argv.hasOwnProperty("title") && argv.hasOwnProperty("body")) {
