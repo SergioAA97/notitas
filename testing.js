@@ -96,6 +96,31 @@ export function addNote(title, body) {
   });
 }
 
+/**
+ * @desc Añade una nueva nota.
+ *
+ * @example
+ *  const wasSuccessful = addNote("Un nuevo titulo","Con mas texto");
+ *
+ *  @param {string} title - Titulo de la nota
+ *  @return {Array<object>} True-->Array with search resutls , false-->Empty array
+ */
+export function getNote(title){
+  if(!title || typeof title !== "string"){
+    console.log("Error: A title is required");
+    return false;
+  }
+  
+  var db=fetchNotes();
+  var notes=db.filter(function searchNote(note){
+    return (note.body.match(new RegExp(title,"i")) || 
+    note.title.match(new RegExp(title,"i")));
+  })
+  if(notes.length==0){
+    console.log("No results for search "+ title);
+  }
+  return notes;
+}
 /* ----    END EXPORTS   ---- */
 
 /* ----     EXECUTABLE CODE    ----
@@ -110,6 +135,7 @@ export function addNote(title, body) {
  *  simplemente con poner npm run testing. Podeis ver como esta hecho en el
  *  archivo package.json, bajo la propiedad "scripts".
  */
+console.log(getNote("1"));
 switch (argv._[0]) {
   case "add":
     if (argv.hasOwnProperty("title") && argv.hasOwnProperty("body")) {
