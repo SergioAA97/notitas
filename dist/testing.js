@@ -187,8 +187,7 @@ function deleteNote(title) {
  *  simplemente con poner npm run testing. Podeis ver como esta hecho en el
  *  archivo package.json, bajo la propiedad "scripts".
  */
-//console.log(getNote("1"));
-console.log(deleteNote("The new note 2"));
+
 switch (_yargs.argv._[0]) {
   case "add":
     if (_yargs.argv.hasOwnProperty("title") && _yargs.argv.hasOwnProperty("body")) {
@@ -197,8 +196,14 @@ switch (_yargs.argv._[0]) {
 
     break;
   case "remove":
+    if (_yargs.argv.hasOwnProperty("title")) {
+      console.log(deleteNote(_yargs.argv.title));
+    }
     break;
   case "get":
+    if (_yargs.argv.hasOwnProperty("title")) {
+      console.log(getNote(_yargs.argv.title));
+    }
     break;
   case "all":
     console.log(fetchNotes());
