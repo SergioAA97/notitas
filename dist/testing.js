@@ -8,6 +8,7 @@ exports.createNote = createNote;
 exports.fetchNotes = fetchNotes;
 exports.addNote = addNote;
 exports.getNote = getNote;
+exports.deleteNote = deleteNote;
 
 var _fs = require("fs");
 
@@ -114,6 +115,15 @@ function addNote(title, body) {
   });
 }
 
+/**
+ * @desc Devuelve notas filtradas por título.
+ *
+ * @example
+ *  const Results = getNote(title);
+ *
+ *  @param {string} title - Titulo de la nota
+ *  @return {Array<object>} True-->Array with search resutls , false-->Empty array
+ */
 function getNote(title) {
   if (!title || typeof title !== "string") {
     console.log("Error: A title is required");
@@ -129,6 +139,40 @@ function getNote(title) {
   }
   return notes;
 }
+
+/**
+ * @desc Elimina una nueva nota.
+ *
+ * @example
+ *  const wasSuccessful = deleteNote(title);
+ *
+ *  @param {string} title - Titulo de la nota a eliminar
+ *  @return {boolean} True , false
+ */
+function deleteNote(title) {
+  var search = fetchNotes();
+  if (search.length === 0) {
+    console.log("No notes to delete");
+    return false;
+  }
+  var index = search.findIndex(function (note) {
+    return note.title === title;
+  });
+  if (index === -1) {
+    console.log("No notes match " + title);
+    return false;
+  }
+  var removedNote = search.splice(index, 1);
+  try {
+    (0, _fs.writeFile)(notePath, JSON.stringify(search), function (error) {
+      if (error) throw err;
+    });
+  } catch (e) {
+    console.log(e);
+    return false;
+  }
+  return true;
+}
 /* ----    END EXPORTS   ---- */
 
 /* ----     EXECUTABLE CODE    ----
@@ -143,7 +187,8 @@ function getNote(title) {
  *  simplemente con poner npm run testing. Podeis ver como esta hecho en el
  *  archivo package.json, bajo la propiedad "scripts".
  */
-console.log(getNote("1"));
+//console.log(getNote("1"));
+console.log(deleteNote("The new note 2"));
 switch (_yargs.argv._[0]) {
   case "add":
     if (_yargs.argv.hasOwnProperty("title") && _yargs.argv.hasOwnProperty("body")) {

@@ -1,5 +1,5 @@
 /* Se importan modulos */
-import { readFileSync, writeFile } from "fs";
+import { readFileSync, writeFile, fstat } from "fs";
 /* Parseo de comandos por consola */
 import { argv } from "yargs";
 
@@ -97,29 +97,65 @@ export function addNote(title, body) {
 }
 
 /**
- * @desc Añade una nueva nota.
+ * @desc Devuelve notas filtradas por título.
  *
  * @example
- *  const wasSuccessful = addNote("Un nuevo titulo","Con mas texto");
+ *  const Results = getNote(title);
  *
  *  @param {string} title - Titulo de la nota
  *  @return {Array<object>} True-->Array with search resutls , false-->Empty array
  */
-export function getNote(title){
-  if(!title || typeof title !== "string"){
+export function getNote(title) {
+  if (!title || typeof title !== "string") {
     console.log("Error: A title is required");
     return false;
   }
-  
-  var db=fetchNotes();
-  var notes=db.filter(function searchNote(note){
-    return (note.body.match(new RegExp(title,"i")) || 
-    note.title.match(new RegExp(title,"i")));
-  })
-  if(notes.length==0){
-    console.log("No results for search "+ title);
+
+  var db = fetchNotes();
+  var notes = db.filter(function searchNote(note) {
+    return (
+      note.body.match(new RegExp(title, "i")) ||
+      note.title.match(new RegExp(title, "i"))
+    );
+  });
+  if (notes.length == 0) {
+    console.log("No results for search " + title);
   }
   return notes;
+}
+
+/**
+ * @desc Elimina una nueva nota.
+ *
+ * @example
+ *  const wasSuccessful = deleteNote(title);
+ *
+ *  @param {string} title - Titulo de la nota a eliminar
+ *  @return {boolean} True , false
+ */
+export function deleteNote(title) {
+  var search = fetchNotes();
+  if (search.length === 0) {
+    console.log("No notes to delete");
+    return false;
+  }
+  var index = search.findIndex(function(note) {
+    return note.title === title;
+  });
+  if (index === -1) {
+    console.log("No notes match " + title);
+    return false;
+  }
+  var removedNote = search.splice(index, 1);
+  try {
+    writeFile(notePath, JSON.stringify(search), function(error) {
+      if (error) throw err;
+    });
+  } catch (e) {
+    console.log(e);
+    return false;
+  }
+  return true;
 }
 /* ----    END EXPORTS   ---- */
 
@@ -135,7 +171,7 @@ export function getNote(title){
  *  simplemente con poner npm run testing. Podeis ver como esta hecho en el
  *  archivo package.json, bajo la propiedad "scripts".
  */
-console.log(getNote("1"));
+
 switch (argv._[0]) {
   case "add":
     if (argv.hasOwnProperty("title") && argv.hasOwnProperty("body")) {
