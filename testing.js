@@ -21,6 +21,16 @@ import { argv } from "yargs";
  *  import { fetchNotes } from './testing.js';
  */
 
+export function createNote({ title, body }) {
+  let note = {
+    title,
+    body,
+    created: new Date(),
+    lastModified: new Date()
+  };
+  return note;
+}
+
 export const notePath = "./notes.txt";
 /**
  * @desc Devuelve un array con las notas o vacio
@@ -52,7 +62,16 @@ export function fetchNotes({ path = notePath } = {}) {
 
   return jsonObj;
 }
-
+/**
+ * @desc Añade una nueva nota.
+ *
+ * @example
+ *  const wasSuccessful = addNote("Un nuevo titulo","Con mas texto");
+ *
+ *  @param {string} title - Titulo de la nota
+ *  @param {string} body - Cuerpo de la nota
+ *  @return {boolean} True if successful, false if something failed
+ */
 export function addNote(title, body) {
   //Parameter checking
   if (!title || typeof title !== "string") {
@@ -62,12 +81,7 @@ export function addNote(title, body) {
 
   var notes = fetchNotes();
 
-  var note = {
-    title: title,
-    body: body,
-    created: new Date(),
-    lastModified: new Date()
-  };
+  var note = createNote({ title, body });
 
   notes.push(note);
   var newArray = JSON.stringify(notes);
