@@ -180,8 +180,14 @@ switch (argv._[0]) {
 
     break;
   case "remove":
+    if (argv.hasOwnProperty("title")) {
+      console.log(deleteNote(argv.title));
+    }
     break;
   case "get":
+    if (argv.hasOwnProperty("title")) {
+      console.log(getNote(argv.title));
+    }
     break;
   case "all":
     console.log(fetchNotes());
