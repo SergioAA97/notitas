@@ -3,3 +3,7 @@ extends layout
 block content
   h1= title
   p Welcome to #{title}
+  h3 Notes
+      for note in notes
+        h5= note.title
+        p=note.body
