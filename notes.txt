@@ -1,1 +1,1 @@
-[{"title":"The new note 2","body":"Some text goes here","created":"2018-11-18T15:32:46.884Z","lastModified":"2018-11-18T15:32:46.884Z"},{"title":"The new note 2","body":"Some text goes here","created":"2018-11-18T15:32:52.733Z","lastModified":"2018-11-18T15:32:52.733Z"},{"title":"The new note 2","body":"Some text goes here","created":"2018-11-18T15:32:56.569Z","lastModified":"2018-11-18T15:32:56.569Z"},{"title":"Nueva nota","body":"Con text","created":"2018-11-18T17:33:42.201Z","lastModified":"2018-11-18T17:33:42.201Z"}]
+[]
