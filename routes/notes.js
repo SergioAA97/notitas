@@ -62,7 +62,7 @@ router.get("/", (req, res) => {
 });
 
 /* INSERT note listing. */
-router.get("/insert", function(req, res, next) {
+router.post("/insert", function(req, res, next) {
   mongoClient.connect(
     "mongodb://notitas:5EXcMWCWtJPrD74bC8bKGqQ2GB3iDsPwot2NOqx1Kbl52iO2y402VXsE7AxB8F64PH2Ub5NuXlId6ck5eDWbPA%3D%3D@notitas.documents.azure.com:10255/?ssl=true",
     function(err, client) {
@@ -70,23 +70,26 @@ router.get("/insert", function(req, res, next) {
       console.log("Connected successfully to server");
 
       let title, body;
-      title = req.get("title");
-      body = req.get("body");
+      title = req.body.title;
+      body = req.body.body;
 
       if (!title || !body) {
-        client.close();
         console.log("Error parsing headers");
+        res.sendStatus(500);
+        client.close();
       } else if (
         !validator.isAscii(title) ||
         !validator.isLength(title, { min: 1, max: 64 })
       ) {
         console.log("Error parsing headers");
+        res.sendStatus(500);
         client.close();
       }
 
       const db = client.db(dbName);
 
       insertNote(db, { title, body }, () => {
+        res.redirect("/api");
         client.close();
       });
     }
