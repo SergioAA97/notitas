@@ -79,6 +79,8 @@ export function addNote(title, body) {
     return false;
   }
 
+  /* Codigo que se ejecuta al correr el programa desde la consola */
+
   var notes = fetchNotes();
 
   var note = createNote({ title, body });
@@ -112,7 +114,7 @@ export function getNote(title) {
   }
 
   var db = fetchNotes();
-  var notes = db.filter(function searchNote(note) {
+  var notes = db.filter(function(note) {
     return (
       note.body.match(new RegExp(title, "i")) ||
       note.title.match(new RegExp(title, "i"))
@@ -125,7 +127,7 @@ export function getNote(title) {
 }
 
 /**
- * @desc Elimina una nueva nota.
+ * @desc Elimina una nota.
  *
  * @example
  *  const wasSuccessful = deleteNote(title);
@@ -134,19 +136,21 @@ export function getNote(title) {
  *  @return {boolean} True , false
  */
 export function deleteNote(title) {
-  var search = fetchNotes();
+  let search = fetchNotes();
   if (search.length === 0) {
     console.log("No notes to delete");
     return false;
   }
-  var index = search.findIndex(function(note) {
+  let index = search.findIndex(function(note) {
     return note.title === title;
   });
   if (index === -1) {
     console.log("No notes match " + title);
     return false;
   }
-  var removedNote = search.splice(index, 1);
+
+  search.splice(index, 1);
+
   try {
     writeFile(notePath, JSON.stringify(search), function(error) {
       if (error) throw err;

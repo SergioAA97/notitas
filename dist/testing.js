@@ -98,6 +98,8 @@ function addNote(title, body) {
     return false;
   }
 
+  /* Codigo que se ejecuta al correr el programa desde la consola */
+
   var notes = fetchNotes();
 
   var note = createNote({ title: title, body: body });
@@ -131,7 +133,7 @@ function getNote(title) {
   }
 
   var db = fetchNotes();
-  var notes = db.filter(function searchNote(note) {
+  var notes = db.filter(function (note) {
     return note.body.match(new RegExp(title, "i")) || note.title.match(new RegExp(title, "i"));
   });
   if (notes.length == 0) {
@@ -141,7 +143,7 @@ function getNote(title) {
 }
 
 /**
- * @desc Elimina una nueva nota.
+ * @desc Elimina una nota.
  *
  * @example
  *  const wasSuccessful = deleteNote(title);
@@ -162,7 +164,9 @@ function deleteNote(title) {
     console.log("No notes match " + title);
     return false;
   }
-  var removedNote = search.splice(index, 1);
+
+  search.splice(index, 1);
+
   try {
     (0, _fs.writeFile)(notePath, JSON.stringify(search), function (error) {
       if (error) throw err;
