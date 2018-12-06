@@ -1,1 +1,1 @@
-[]
+[{"id":"_rcdaxt0uy","title":"Una nota con id","body":"Un body","created":"2018-12-06T09:47:36.587Z","lastModified":"2018-12-06T09:47:36.587Z"}]

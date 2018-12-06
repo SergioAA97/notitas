@@ -21,8 +21,22 @@ import { argv } from "yargs";
  *  import { fetchNotes } from './testing.js';
  */
 
+/**
+ * @desc Crea un objeto de tipo nota inicializado y lo devuelve
+ *
+ * @example
+ * import {createNote} from './testing.js';
+ *
+ * const note = createNote({title: "Titulo",body:"Body"});
+ *
+ *  @param {Object} o - Un objeto
+ *  @param {string} o.title - Un titulo
+ *  @param {string} o.body - Un cuepo de texto
+ *  @return {Object} El objeto nota
+ */
 export function createNote({ title, body }) {
   let note = {
+    id: generateId(),
     title,
     body,
     created: new Date(),
@@ -79,6 +93,8 @@ export function addNote(title, body) {
     return false;
   }
 
+  /* Codigo que se ejecuta al correr el programa desde la consola */
+
   var notes = fetchNotes();
 
   var note = createNote({ title, body });
@@ -112,7 +128,7 @@ export function getNote(title) {
   }
 
   var db = fetchNotes();
-  var notes = db.filter(function searchNote(note) {
+  var notes = db.filter(function(note) {
     return (
       note.body.match(new RegExp(title, "i")) ||
       note.title.match(new RegExp(title, "i"))
@@ -125,7 +141,7 @@ export function getNote(title) {
 }
 
 /**
- * @desc Elimina una nueva nota.
+ * @desc Elimina una nota.
  *
  * @example
  *  const wasSuccessful = deleteNote(title);
@@ -133,20 +149,22 @@ export function getNote(title) {
  *  @param {string} title - Titulo de la nota a eliminar
  *  @return {boolean} True , false
  */
-export function deleteNote(title) {
-  var search = fetchNotes();
+export function deleteNote(id) {
+  let search = fetchNotes();
   if (search.length === 0) {
     console.log("No notes to delete");
     return false;
   }
-  var index = search.findIndex(function(note) {
-    return note.title === title;
+  let index = search.findIndex(function(note) {
+    return note.id === id;
   });
   if (index === -1) {
-    console.log("No notes match " + title);
+    console.log("No notes match " + id);
     return false;
   }
-  var removedNote = search.splice(index, 1);
+
+  search.splice(index, 1);
+
   try {
     writeFile(notePath, JSON.stringify(search), function(error) {
       if (error) throw err;
@@ -157,7 +175,113 @@ export function deleteNote(title) {
   }
   return true;
 }
+/**
+ * @desc Modifica una nota.
+ *
+ * @example
+ *  const wasSuccessful = modNote(id,{title: "New title",body:"New body"});
+ *  @param {string} idToSearch - Id de la nota a modificar
+ *  @param {object} o - Objeto con propiedades a modificar
+ *  @param {string} o.title - Titulo del objeto a modificar
+ *  @param {string} o.body  - Body del objeto a modificar
+ *  @return {boolean} True , false
+ */
+export function modNote(idToSearch, { title, body }) {
+  //Parameter checking
+  if (!idToSearch && typeof idToSearch !== "string") {
+    console.log("Error: id to search was empty or non valid.");
+    return false;
+  }
+  //Get notes
+  let notes = fetchNotes();
+
+  //Find the note
+  let index = notes.findIndex(x => x.id === idToSearch);
+  if (index === -1) {
+    console.log("No note found for id ", idToSearch);
+    return false;
+  }
+  if (title || body) {
+    let modified = false;
+    if (title && typeof title === "string") {
+      notes[index].title = title;
+      modified = true;
+    }
+    if (body && typeof body === "string") {
+      notes[index].body = body;
+      modified = true;
+    }
+    if (modified) {
+      notes[index].lastModified = new Date();
+    } else {
+      return false;
+    }
+
+    return writeNotes(notes);
+  }
+  return false;
+}
 /* ----    END EXPORTS   ---- */
+/* ----    LOCAL FUNCTIONS   ---- */
+/**
+ * @desc Escribe notas a partir de Array a archivo
+ *
+ * @example
+ * var success = writeNotes(notes,"./somePath.txt");
+ *
+ * @return {boolean} Devuelve verdadero si se escribe con exito, falso si hay error
+ */
+function writeNotes(notes, path = notePath) {
+  try {
+    writeFile(path, JSON.stringify(notes), function(error) {
+      if (error) throw err;
+    });
+  } catch (e) {
+    console.log(e);
+    return false;
+  }
+  return true;
+}
+
+/**
+ * @desc Genera un ID unico
+ *
+ * @example
+ * var id = generateId();
+ *
+ *  @return {string} El ID
+ */
+function generateId() {
+  function generate() {
+    return (
+      "_" +
+      Math.random()
+        .toString(36)
+        .substr(2, 9)
+    );
+  }
+
+  var arr = fetchNotes();
+  var id = generate();
+
+  var isUnique = false;
+  //Check duplicates
+  while (!isUnique) {
+    //Check notes for matching id
+    var dup = arr.filter(x => x.id === id);
+    if (dup.length === 0) {
+      //No duplicates
+      isUnique = true;
+    } else {
+      //Re generate
+      id = generate();
+    }
+  }
+
+  return id;
+}
+
+/* ----    END LOCAL FUNCTIONS   ---- */
 
 /* ----     EXECUTABLE CODE    ----
  *
@@ -180,8 +304,8 @@ switch (argv._[0]) {
 
     break;
   case "remove":
-    if (argv.hasOwnProperty("title")) {
-      console.log(deleteNote(argv.title));
+    if (argv.hasOwnProperty("id")) {
+      console.log(deleteNote(argv.id));
     }
     break;
   case "get":
@@ -193,16 +317,26 @@ switch (argv._[0]) {
     console.log(fetchNotes());
     break;
   case "mod":
+    if (
+      argv.hasOwnProperty("id") &&
+      (argv.hasOwnProperty("title") || argv.hasOwnProperty("body"))
+    ) {
+      let obj = {
+        title: argv.title ? argv.title : "",
+        body: argv.body ? argv.body : ""
+      };
+      console.log(modNote(argv.id, obj));
+    }
     break;
   default:
     console.log("Usage:");
     console.log(
       "Add: add a new note (--title='New Title', --body='Some text here...')"
     );
-    console.log("Remove: remove a note (--title='New Title')");
+    console.log("Remove: remove a note (--id='New id')");
     console.log("Get: get a note (--title='New Title')");
     console.log(
-      "Mod: modify a note (--title='New Title', --body='Some text here...')"
+      "Mod: modify a note (--id='New id', --body='Some text here...')"
     );
     console.log("All: get all notes");
     break;
