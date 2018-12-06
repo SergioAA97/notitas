@@ -25,7 +25,7 @@ const insertNote = function(db, { title, body }, callback) {
     callback(result);
   });
 };
-
+/* Get Notes */
 const getNotes = function(db, res, callback) {
   const collection = db.collection(collectionName);
   //Get
@@ -33,7 +33,7 @@ const getNotes = function(db, res, callback) {
     if (err) {
       res.send(err);
     } else if (result.length) {
-      res.render("index", {
+      res.render("index-new", {
         // Pass the returned database documents to Pug
         notes: result,
         title: "Notitas"
@@ -45,6 +45,7 @@ const getNotes = function(db, res, callback) {
   });
 };
 
+/* GET index page */
 router.get("/", (req, res) => {
   mongoClient.connect(
     "mongodb://notitas:5EXcMWCWtJPrD74bC8bKGqQ2GB3iDsPwot2NOqx1Kbl52iO2y402VXsE7AxB8F64PH2Ub5NuXlId6ck5eDWbPA%3D%3D@notitas.documents.azure.com:10255/?ssl=true",
@@ -95,5 +96,6 @@ router.post("/insert", function(req, res, next) {
     }
   );
 });
+
 
 module.exports = router;

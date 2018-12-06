@@ -1,8 +1,38 @@
 body {
   padding: 50px;
-  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+  font-family: "Open Sans", sans-serif;
+  -webkit-font-smoothing: antialiased;
 }
 
 a {
-  color: #00B7FF;
+  color: #00b7ff;
+}
+
+.add-container {
+  grid-area: add;
+}
+
+.notes-container {
+  grid-area: notes;
+}
+
+.container {
+  position: relative;
+  display: grid;
+  grid-template-columns: 2rem 20rem 4rem auto 4rem;
+  grid-template-rows: 2rem auto 4rem;
+  grid-template-areas:
+    ". . . . ."
+    ". add . notes ."
+    ". . . . .";
+}
+
+.title {
+  font-size: 36px;
+  margin-bottom: 1.5rem;
+}
+
+.delete-button {
+  position: relative;
+  float: right;
 }

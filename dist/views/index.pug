@@ -3,16 +3,4 @@ extends layout
 block content
   h1= title
   p Welcome to #{title}
-  h3 Add Note
-    form(action="/api/insert", method='post', name="addNote")
-      p Title
-      input#title(type="text", name="title")
-      p Body
-      input#body(type="text", name="body")
-      br
-      br
-      button(type="submit") Submit
-  h3 Notes
-      for note in notes
-        h5= note.title
-        p=note.body
+  p Access /api to see more

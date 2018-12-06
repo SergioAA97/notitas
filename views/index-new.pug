@@ -1,0 +1,25 @@
+extends layout
+
+block content
+  .container
+    .add-container
+      .title Add a new note 
+      form(action="/api/insert", method='post', name="addNote")
+        .group
+          input#title(type="text" required name="title" autocomplete="off")
+          span(class="highlight")
+          span(class="bar")
+          label(for="title") Title
+        .group
+          input#body(type="text" required name="body" autocomplete="off")
+          span(class="highlight")
+          span(class="bar")
+          label(for="title") Body
+        button(type="submit" class="send-button") Submit
+    .notes-container
+      for note in notes
+        .note-container
+          .note-title=note.title
+          .note-body=note.body
+          button(class="delete-button")
+            span(class="fas fa-times delete")
