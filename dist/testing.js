@@ -32,12 +32,26 @@ var _yargs = require("yargs");
  *  import { fetchNotes } from './testing.js';
  */
 
+/**
+ * @desc Crea un objeto de tipo nota inicializado y lo devuelve
+ *
+ * @example
+ * import {createNote} from './testing.js';
+ *
+ * const note = createNote({title: "Titulo",body:"Body"});
+ *
+ *  @param {Object} o - Un objeto
+ *  @param {string} o.title - Un titulo
+ *  @param {string} o.body - Un cuepo de texto
+ *  @return {Object} El objeto nota
+ */
 /* Se importan modulos */
 function createNote(_ref) {
   var title = _ref.title,
       body = _ref.body;
 
   var note = {
+    id: generateId(),
     title: title,
     body: body,
     created: new Date(),
@@ -45,7 +59,44 @@ function createNote(_ref) {
   };
   return note;
 }
+
+/**
+ * @desc Genera un ID unico
+ *
+ * @example
+ * var id = generateId();
+ *
+ *  @return {string} El ID
+ */
+
 /* Parseo de comandos por consola */
+function generateId() {
+  function generate() {
+    return "_" + Math.random().toString(36).substr(2, 9);
+  }
+
+  var arr = fetchNotes();
+  var id = generate();
+
+  var isUnique = false;
+  //Check duplicates
+  while (!isUnique) {
+    //Check notes for matching id
+    var dup = arr.filter(function (x) {
+      return x.id === id;
+    });
+    if (dup.length === 0) {
+      //No duplicates
+      isUnique = true;
+    } else {
+      //Re generate
+      id = generate();
+    }
+  }
+
+  return id;
+}
+
 var notePath = exports.notePath = "./notes.txt";
 /**
  * @desc Devuelve un array con las notas o vacio

@@ -21,14 +21,66 @@ import { argv } from "yargs";
  *  import { fetchNotes } from './testing.js';
  */
 
+/**
+ * @desc Crea un objeto de tipo nota inicializado y lo devuelve
+ *
+ * @example
+ * import {createNote} from './testing.js';
+ *
+ * const note = createNote({title: "Titulo",body:"Body"});
+ *
+ *  @param {Object} o - Un objeto
+ *  @param {string} o.title - Un titulo
+ *  @param {string} o.body - Un cuepo de texto
+ *  @return {Object} El objeto nota
+ */
 export function createNote({ title, body }) {
   let note = {
+    id: generateId(),
     title,
     body,
     created: new Date(),
     lastModified: new Date()
   };
   return note;
+}
+
+/**
+ * @desc Genera un ID unico
+ *
+ * @example
+ * var id = generateId();
+ *
+ *  @return {string} El ID
+ */
+function generateId() {
+  function generate() {
+    return (
+      "_" +
+      Math.random()
+        .toString(36)
+        .substr(2, 9)
+    );
+  }
+
+  var arr = fetchNotes();
+  var id = generate();
+
+  var isUnique = false;
+  //Check duplicates
+  while (!isUnique) {
+    //Check notes for matching id
+    var dup = arr.filter(x => x.id === id);
+    if (dup.length === 0) {
+      //No duplicates
+      isUnique = true;
+    } else {
+      //Re generate
+      id = generate();
+    }
+  }
+
+  return id;
 }
 
 export const notePath = "./notes.txt";
